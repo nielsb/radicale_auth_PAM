@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, find_packages
+import setuptools
 
-setup(
+with open("README.md", "r") as fh:
+    desc = fh.read()
+
+setuptools.setup(
         name="radicale_auth_PAM",
         version="0.1",
         description="PAM authentication plugin for Radicale",
+        long_description=desc,
         author="Joseph Nahmias",
         author_email="joe@nahmias.net",
         url="https://gitlab.com/jello/radicale_auth_PAM",
         install_requires=["python-pam",],
-        packages=find_packages(),
+        packages=setuptools.find_packages(),
         include_package_data=True,
         license="GPL3+",
         classifiers=[
