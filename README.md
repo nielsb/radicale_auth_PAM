@@ -10,10 +10,13 @@ to make use of the [Linux PAM] system library.
 
 ## Installation
 
-    pip3 install radicale-auth-PAM
+```shell
+pip3 install radicale-auth-PAM
+```
 
 ## Configuration
 
-    [auth]
-    type = radicale_auth_PAM
-
+```INI
+[auth]
+type = radicale_auth_PAM
+```
