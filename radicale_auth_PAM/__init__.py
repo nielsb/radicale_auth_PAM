@@ -17,9 +17,8 @@
 """
 Authentication plugin for the Radicale Calendar Server
 
-uses PAM as the authentication backend
-On a Debian-based system, you will need package python3-pampy.
-
+Allows Radicale to use PAM as the authentication backend.
+The PAM service used is configurable, default = login.
 """
 
 from radicale.auth import BaseAuth
@@ -29,17 +28,21 @@ class Auth(BaseAuth):
     def __init__(self, configuration, logger):
         super().__init__(configuration, logger)
         try:
-            self.logger.debug("Attempting to load module pam.")
+            logger.debug("Attempting to load module pam.")
             self._pam = import_module('pam').pam()
         except Exception as e:
             raise RuntimeError("Failed to load pam python module: %s." % e) from e
-        self.logger.debug("Loaded module pam successfully.")
+        logger.debug("Loaded module pam successfully.")
+        self._service = 'login'     # default
+        if configuration.has_option('auth', 'pam_service'):
+            self._service = self.configuration.get('auth', 'pam_service')
+            logger.info('Using PAM service "%s" for authentication.', self._service)
 
     def is_authenticated(self, user, password):
         if user is None or password is None:
             return False
         self.logger.debug("Login attempt by '%s'.", user)
-        self._pam.authenticate(user, password)
+        self._pam.authenticate(user, password, self._service)
         self.logger.debug("Pam returned %d - %s.",
                 self._pam.code, self._pam.reason)
         if 0 == self._pam.code:
