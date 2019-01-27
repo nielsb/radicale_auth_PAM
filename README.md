@@ -18,5 +18,22 @@ pip3 install radicale-auth-PAM
 
 ```INI
 [auth]
+# Authentication method
 type = radicale_auth_PAM
+# PAM Service used for authentication
+#pam_service = login
 ```
+
+By default, we use the login PAM service to do authentication.  However, you
+can create a custom PAM service if want.  For example, if you have `pam_service=radicale` and then have the following contents in `/etc/pam.d/radicale`:
+
+```
+#%PAM-1.0
+# /etc/pam.d/radicale
+
+auth required pam_succeed_if.so quiet_success user ingroup radicale-users
+@include common-auth
+```
+
+Then users will need to be a member of the `radicale-users` group before being
+granted access.
