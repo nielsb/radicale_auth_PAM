@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
         name="radicale_auth_PAM",
-        version="0.2rc1",
+        version="0.2",
         description="PAM authentication plugin for Radicale",
         long_description=desc,
         author="Joseph Nahmias",
