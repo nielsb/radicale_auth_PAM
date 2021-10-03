@@ -21,12 +21,14 @@ Allows Radicale to use PAM as the authentication backend.
 The PAM service used is configurable, default = login.
 """
 
+import logging
 from radicale.auth import BaseAuth
 from importlib import import_module
 
 class Auth(BaseAuth):
-    def __init__(self, configuration, logger):
-        super().__init__(configuration, logger)
+    def __init__(self, configuration):
+        super().__init__(configuration)
+        logger = logging.getLogger("radicale")
         try:
             logger.debug("Attempting to load module pam.")
             self._pam = import_module('pam').pam()
