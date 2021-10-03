@@ -36,9 +36,9 @@ class Auth(BaseAuth):
             raise RuntimeError("Failed to load pam python module: %s." % e) from e
         logger.debug("Loaded module pam successfully.")
         self._service = 'login'     # default
-        if configuration.has_option('auth', 'pam_service'):
+        if configuration.get('auth', 'pam_service'):
             self._service = self.configuration.get('auth', 'pam_service')
-            logger.info('Using PAM service "%s" for authentication.', self._service)
+        logger.info('Using PAM service "%s" for authentication.', self._service)
 
     def is_authenticated(self, user, password):
         if user is None or password is None:
