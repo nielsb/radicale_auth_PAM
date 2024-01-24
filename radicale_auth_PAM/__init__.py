@@ -24,14 +24,14 @@ The PAM service used is configurable, default = login.
 from radicale.auth import BaseAuth
 from radicale.log import logger
 from importlib import import_module
+import contextlib
 
 class Auth(BaseAuth):
     def __init__(self, configuration):
         super().__init__(configuration)
-        logger = logging.getLogger("radicale")
         try:
-            logger.debug("Attempting to load module pam.")
-            self._pam = import_module('pam').pam()
+            logger.debug("Attempting to load module pamela.")
+            self._pam = import_module('pamela')
         except Exception as e:
             raise RuntimeError("Failed to load pam python module: %s." % e) from e
         logger.debug("Loaded module pam successfully.")
@@ -44,13 +44,11 @@ class Auth(BaseAuth):
         if login is None or password is None:
             return ''
         logger.debug("Login attempt by '%s'.", login)
-        self._pam.authenticate(login, password, self._service)
-        logger.debug("Pam returned %d - %s.",
-                self._pam.code, self._pam.reason)
-        if 0 == self._pam.code:
-            logger.info("User '%s' authenticated successfully.", user)
-            return login
-        else:
+        try:
+            self._pam.authenticate(login, password, self._service)
+        except Exception as e:
             logger.warning("Authentication failed for user '%s': %s.",
-                    login, self._pam.reason)
+                    login, e)
             return ''
+        logger.info("User '%s' authenticated successfully.", login)
+        return login
