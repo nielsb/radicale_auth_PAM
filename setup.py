@@ -10,6 +10,7 @@ setuptools.setup(
         version="0.2",
         description="PAM authentication plugin for Radicale",
         long_description=desc,
+        long_description_content_type="text/markdown",
         author="Joseph Nahmias",
         author_email="joe@nahmias.net",
         url="https://gitlab.com/jello/radicale_auth_PAM",
