@@ -21,8 +21,8 @@ Allows Radicale to use PAM as the authentication backend.
 The PAM service used is configurable, default = login.
 """
 
-import logging
 from radicale.auth import BaseAuth
+from radicale.log import logger
 from importlib import import_module
 
 class Auth(BaseAuth):
@@ -36,21 +36,21 @@ class Auth(BaseAuth):
             raise RuntimeError("Failed to load pam python module: %s." % e) from e
         logger.debug("Loaded module pam successfully.")
         self._service = 'login'     # default
-        if configuration.get('auth', 'pam_service'):
-            self._service = self.configuration.get('auth', 'pam_service')
-        logger.info('Using PAM service "%s" for authentication.', self._service)
+        with contextlib.suppress(KeyError):
+            self._service = configuration.get('auth', 'pam_service')
+            logger.info('Using PAM service "%s" for authentication.', self._service)
 
-    def is_authenticated(self, user, password):
-        if user is None or password is None:
-            return False
-        self.logger.debug("Login attempt by '%s'.", user)
-        self._pam.authenticate(user, password, self._service)
-        self.logger.debug("Pam returned %d - %s.",
+    def login(self, login, password):
+        if login is None or password is None:
+            return ''
+        logger.debug("Login attempt by '%s'.", login)
+        self._pam.authenticate(login, password, self._service)
+        logger.debug("Pam returned %d - %s.",
                 self._pam.code, self._pam.reason)
         if 0 == self._pam.code:
-            self.logger.info("User '%s' authenticated successfully.", user)
-            return True
+            logger.info("User '%s' authenticated successfully.", user)
+            return login
         else:
-            self.logger.warning("Authentication failed for user '%s': %s.",
-                    user, self._pam.reason)
-            return False
+            logger.warning("Authentication failed for user '%s': %s.",
+                    login, self._pam.reason)
+            return ''
