@@ -4,6 +4,9 @@
 contacts.  This python module provides an authentication plugin for Radicale
 to make use of the [Linux PAM] system library.
 
+The original author is Joseph Nahmias and this repo was forked from his [gitlab repository].
+
+[gitlab repository]: https://gitlab.com/jello/radicale_auth_PAM/
 [Radicale]: https://radicale.org/
 [Linux PAM]: http://www.linux-pam.org/
 
